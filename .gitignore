@@ -1,0 +1,9 @@
+venv
+__pychache__
+dist
+build
+.idea
+Webserver
+drivers
+*.spec
+*.log

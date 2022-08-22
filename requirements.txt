@@ -1,0 +1,4 @@
+selenium~=4.4.3
+pause
+requests
+bs4
