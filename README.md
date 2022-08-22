@@ -1,2 +1,4 @@
-# wutex
+# LPIS Automation
+
+Run gui.py
 
