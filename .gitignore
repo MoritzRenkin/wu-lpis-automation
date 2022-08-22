@@ -5,5 +5,7 @@ build
 .idea
 Webserver
 drivers
+Anleitung.docx
+Deployment
 *.spec
 *.log
