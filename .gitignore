@@ -3,7 +3,7 @@ __pychache__
 dist
 build
 .idea
-./drivers
+./drivers/chromedrivers
 ./Anleitung.docx
 *.spec
 *.log
