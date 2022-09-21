@@ -50,8 +50,4 @@ werden automatisch geordnet und nacheinander durchgeführt. Bei zwei Anmeldungen
 gleichen Zeit zählt die Reihenfolge im User-Interface.
 Zum Starten einfach auf „Start Script“ klicken (Bitte kein Doppelklick). Beim ersten Ausführen meldet
 sich eventuell die eure Firewall, weil das Programm mehrere Verbindungen mit dem Internet
-aufbaut. Es ist nicht zwingend erforderlich den Zugriff zuzulassen, allerdings können andernfalls
-einige Features nur eingeschränkt benutzt werden. Wir empfehlen den Zugriff in privatem
-Heimnetzwerken und öffentlichen Netzwerken zuzulassen.
-
-![image](https://user-images.githubusercontent.com/38352381/191571823-ff29cf1a-b9bf-42a5-996e-dc62dfde99a8.png)
+aufbaut. 
