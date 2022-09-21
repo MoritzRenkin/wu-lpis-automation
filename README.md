@@ -5,9 +5,10 @@
 Für non-Techies mit Windows 10: Deployment/LPIS/windows10/lpis.exe starten.
 
 Für alle anderen, Python 3.7 oder neuer verwenden:
-“`pip install requirements.txt“`
 
-“`python3 gui.py“`
+`pip install requirements.txt`
+
+`python3 gui.py`
 
 ## Verwendung
 ![image](https://user-images.githubusercontent.com/38352381/191569832-1feea657-448d-455d-ae5e-f1ae4298a8a7.png)
