@@ -7,7 +7,7 @@ Für non-Techies mit Windows 10: Deployment/LPIS/windows10/lpis.exe starten.
 
 Für alle anderen, Python 3.7 oder neuer verwenden.
 ```
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 
 ```
