@@ -1,18 +1,25 @@
-import selenium.common.exceptions as selenium_exceptions
-from selenium.webdriver.support.select import Select
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.common.by import By
 import time
 from datetime import datetime, timedelta
 from configparser import ConfigParser
 import pause
 import sys
-from drivers.drivers import start_chromedriver, start_geckodriver
 from threading import Thread
 import requests
 import logging
 import os
+
+import selenium.common.exceptions as selenium_exceptions
+from selenium import webdriver
+from selenium.webdriver.support.select import Select
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.firefox.service import Service as FirefoxService
+from selenium.webdriver.edge.service import Service as EdgeService
+from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.firefox import GeckoDriverManager
+from webdriver_manager.microsoft import EdgeChromiumDriverManager
 
 
 if getattr(sys, 'frozen', False):
@@ -38,7 +45,6 @@ class Bot:
         self.driver = None
 
     def __call__(self):
-
         self.run()
 
 
@@ -70,8 +76,8 @@ class Bot:
         try:
             self.pull_config()
 
-            self.status.value = b'Checking for driver updates'
-            self.prepare_drivers()
+            #self.status.value = b'Checking for driver updates'
+            #self.prepare_drivers()
 
             def sorter(a):
                 if str(a[0]) == 'now':
@@ -123,17 +129,28 @@ class Bot:
             except (AttributeError, selenium_exceptions.InvalidSessionIdException):
                 pass
 
-
             sys.exit()
 
     def start_driver(self, headless=None, update=False):
-        if not headless:
+        os.environ['WDM_LOCAL'] = '1'
+
+        if headless is None:
             headless = self.headless
         if self.browser == 'Google Chrome':
-            self.driver = start_chromedriver(headless=headless, update=update)
+            service_args = ["hide_console", ]
+            options = webdriver.ChromeOptions()
+            options.add_argument('log-level=OFF')
+
+            self.driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), service_args=service_args, options=options)
 
         elif self.browser == 'Firefox':
-            self.driver = start_geckodriver(headless=headless)
+            options = webdriver.firefox.options.Options()
+            if headless:
+                options.headless = True
+            self.driver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()), options=options)
+
+        elif self.browser == 'Edge':
+            self.driver = webdriver.Edge(service=EdgeService(EdgeChromiumDriverManager().install()))
 
         else:
             raise RuntimeError('Browser not known')
@@ -142,13 +159,13 @@ class Bot:
         self.driver.implicitly_wait(2)
         self.driver.get('https://lpis.wu.ac.at/lpis')
 
-        username_field = self.driver.find_element_by_xpath('/html/body/form/table/tbody/tr[1]/td[2]/input')
+        username_field = self.driver.find_element(By.XPATH, '/html/body/form/table/tbody/tr[1]/td[2]/input')
         username_field.send_keys(self.username)
 
-        password_field = self.driver.find_element_by_xpath('/html/body/form/table/tbody/tr[2]/td[2]/input')
+        password_field = self.driver.find_element(By.XPATH, '/html/body/form/table/tbody/tr[2]/td[2]/input')
         password_field.send_keys(self.pw)
 
-        submit_button = self.driver.find_element_by_xpath('/html/body/form/input[1]')
+        submit_button = self.driver.find_element(By.XPATH, '/html/body/form/input[1]')
         submit_button.click()
 
         check_error_xpath(self.driver, '/html/body/div/h3/span')
@@ -162,9 +179,9 @@ class Bot:
             self.logger.info(f'Registering to {subject_area}')
             self.status.value = b'Registering to ' + subject_binary
 
-            select = Select(self.driver.find_element_by_xpath('/html/body/form/select'))
+            select = Select(self.driver.find_element(By.XPATH, '/html/body/form/select'))
             select.select_by_index(0)
-            anzeigen_button = self.driver.find_element_by_xpath('/html/body/form/input[4]')
+            anzeigen_button = self.driver.find_element(By.XPATH, '/html/body/form/input[4]')
             anzeigen_button.click()
             try:
                # subject_link = self.driver.find_element_by_link_text(subject_area)
@@ -190,13 +207,13 @@ class Bot:
             for i in range(0, refresh_attempts):
                 self.logger.info('Refreshing...')
                 self.driver.refresh()
-                table = self.driver.find_element_by_class_name('b3k-data').find_element_by_tag_name('tbody')
-                rows_list = table.find_elements_by_tag_name('tr')
+                table = self.driver.find_element(By.CLASS_NAME, 'b3k-data').find_element(By.TAG_NAME, 'tbody')
+                rows_list = table.find_elements(By.TAG_NAME, 'tr')
                 anmelden_button = None
                 for row in rows_list:
-                    row_id = row.find_element_by_tag_name('a').get_attribute('innerHTML')
+                    row_id = row.find_element(By.TAG_NAME, 'a').get_attribute('innerHTML')
                     if row_id == lv_id:
-                        anmelden_button = row.find_elements_by_tag_name('input')[-1]
+                        anmelden_button = row.find_elements(By.TAG_NAME, 'input')[-1]
                         break
 
                 if anmelden_button is None:
@@ -208,7 +225,7 @@ class Bot:
                     self.logger.info('Enabled Registration Button found, submitting')
                     anmelden_button.click()
                     try:
-                        success_msg = self.driver.find_element_by_xpath('/html/body/div/div/b').get_attribute('innerHTML')
+                        success_msg = self.driver.find_element(By.XPATH, '/html/body/div/div/b').get_attribute('innerHTML')
                     except selenium_exceptions.NoSuchElementException:
                         self.logger.exception('Registration unsuccessful: ')
                         success_msg = 'Registration was unsuccessful'
@@ -257,16 +274,16 @@ class Bot:
         subject_area = ' '.join(split[1:]).replace('&', '&amp;')
         self.logger.info(f"Looking for {subject_area} | {subject_type}")
 
-        table = self.driver.find_element_by_class_name('b3k-data').find_element_by_tag_name('tbody')
-        for row in table.find_elements_by_tag_name('tr'):
+        table = self.driver.find_element(By.CLASS_NAME,'b3k-data').find_element(By.TAG_NAME, 'tbody')
+        for row in table.find_elements(By.TAG_NAME, 'tr'):
             try:
-                spans_in_td = row.find_element_by_tag_name('td').find_elements_by_tag_name('span')
+                spans_in_td = row.find_element(By.TAG_NAME, 'td').find_elements(By.TAG_NAME, 'span')
                 lv_type = spans_in_td[0].get_attribute('innerHTML')
                 lv_name = spans_in_td[1].get_attribute('innerHTML')
 
                 self.logger.debug(f"Iteration at: {lv_name} | {lv_type}")
                 if subject_area == lv_name and subject_type == lv_type:
-                    subject_link = spans_in_td[2].find_element_by_tag_name('a')
+                    subject_link = spans_in_td[2].find_element(By.TAG_NAME, 'a')
                     return subject_link
 
             except IndexError:
@@ -287,7 +304,7 @@ class Bot:
                 )
             )
             # just a test if element is really visible:
-            self.driver.find_element_by_xpath('/html/body/table[2]/tbody').get_attribute('innerHTML')
+            self.driver.find_element(By.XPATH, '/html/body/table[2]/tbody').get_attribute('innerHTML')
 
             time_after = time.time()
             results.append(time_after - time_before)
@@ -309,6 +326,7 @@ class Bot:
             self.logger.debug('Skipping await_task because submit_time is now')
 
     def prepare_drivers(self):
+        """legacy"""
         try:
             self.logger.debug("Checking Internet Connection")
             requests.get('https://www.wu.ac.at/')
@@ -340,7 +358,7 @@ class Bot:
 
 def check_existence_by_id(driver, id):
     try:
-        driver.find_element_by_id(id)
+        driver.find_element(By.ID, id)
     except selenium_exceptions.NoSuchElementException:
         return False
     return True
@@ -349,7 +367,7 @@ def check_existence_by_id(driver, id):
 
 def check_error_xpath(driver, xpath):
     try:
-        elem = driver.find_element_by_xpath(xpath)
+        elem = driver.find_element(By.XPATH, xpath)
         return check_error_field(elem)
     except selenium_exceptions.NoSuchElementException:
         return False

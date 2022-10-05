@@ -2,7 +2,7 @@
 
 ## Setup
 
-Für non-Techies mit Windows 10: Deployment/LPIS/windows10/lpis.exe starten.
+Für non-Techies mit Windows 10: ``lpis.exe`` starten.
 
 
 Für alle anderen, Python 3.7 oder neuer verwenden.
@@ -20,7 +20,7 @@ python3 gui.py
 Bei „Subject Area“ ist der Name der Lehrveranstaltung aus LPIS einzutragen:
 - Zum Beispiel „LVP Accounting & Management Control I” in das Feld kopieren
 - Das Skript wird dann den ersten Link unter dieser Überschrift verwenden, also in der Regel
-den Link „LV anmelden“ o.ä.
+den Link „LV anmelden“ o.Ä.
 - Falls das Skript nicht den ersten Link verwenden soll, weil ihr euch zum Beispiel für die
 Prüfung anmelden wollt, dann meldet euch bei mir.
 

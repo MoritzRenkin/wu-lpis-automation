@@ -4,6 +4,7 @@ dist
 build
 create_exe.cmd
 .idea
+.wdm
 ./drivers/chromedrivers
 ./Anleitung.docx
 *.spec
