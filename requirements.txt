@@ -1,4 +1,3 @@
 selenium~=4.4.3
-pause
-requests
-bs4
+pause~=0.3
+requests~=2.28.1
