@@ -10,10 +10,7 @@ from threading import Thread
 from ctypes import c_char
 from datetime import time, datetime, timedelta
 import logging
-import selenium
 import requests
-from bs4 import BeautifulSoup
-import pause
 import sys
 
 

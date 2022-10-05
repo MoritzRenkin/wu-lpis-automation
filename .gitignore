@@ -2,6 +2,7 @@ venv
 __pychache__
 dist
 build
+create_exe.cmd
 .idea
 ./drivers/chromedrivers
 ./Anleitung.docx
