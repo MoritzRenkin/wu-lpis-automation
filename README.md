@@ -20,7 +20,7 @@ python3 gui.py
 Bei „Subject Area“ ist der Name der Lehrveranstaltung aus LPIS einzutragen:
 - Zum Beispiel „LVP Accounting & Management Control I” in das Feld kopieren
 - Das Skript verwendet den ersten Link unter dieser Überschrift, also in der Regel den Link „LV anmelden“ o.Ä.
-- Falls das Skript nicht den ersten Link verwenden soll, weil ihr euch zum Beispiel für die Prüfung anmelden wollt,  meldet euch bei mir.
+- Falls das Skript nicht den ersten Link verwenden soll, weil ihr euch zum Beispiel für die Prüfung anmelden wollt, gerne <a href="https://github.com/MoritzRenkin/wu-lpis-automation/issues">einen Issue</a> erzeugen.
 
 ![image](https://user-images.githubusercontent.com/38352381/191571634-428996a9-69a0-4871-9312-41b9be19e19c.png)
 
