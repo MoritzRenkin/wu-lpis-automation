@@ -1,4 +1,4 @@
-# Anleitung LPIS Skript
+# LPIS Skript [DEPRECATED]
 
 ## Setup
 
