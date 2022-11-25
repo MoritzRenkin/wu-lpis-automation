@@ -1,4 +1,4 @@
-# LPIS Skript [DEPRECATED]
+# LPIS Skript ⛔ [DEPRECATED]
 
 ## Setup
 
